@@ -8,6 +8,7 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -16,13 +17,22 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private Sensor accelerometer;
     private Sensor magnetometer;
 
+    private Sensor temperatureSensor;
+    private Sensor humiditySensor;
+
     private float[] accelerometerReading = new float[3];
     private float[] magnetometerReading = new float[3];
+
+    private float temperatureValue = 0.0f;
+    private float humidityValue = 0.0f;
 
     private double qiblaAngle = 0.0;
 
     private ImageView compassIcon;
     private TextView qiblaDirectionTextView;
+
+    private TextView temperatureTextView;
+    private TextView humidityTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,10 +41,23 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         compassIcon = findViewById(R.id.compassIcon);
         qiblaDirectionTextView = findViewById(R.id.qiblaDirectionTextView);
+        temperatureTextView = findViewById(R.id.temperatureTextView);
+        humidityTextView = findViewById(R.id.humidityTextView);
 
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         magnetometer = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+
+        // check if sensor is available in device
+        temperatureSensor = sensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
+        if (temperatureSensor == null) {
+            temperatureTextView.setText("Temperature: N/A");
+        }
+
+        humiditySensor = sensorManager.getDefaultSensor(Sensor.TYPE_RELATIVE_HUMIDITY);
+        if (humiditySensor == null) {
+            humidityTextView.setText("Humidity: N/A");
+        }
 
         if (accelerometer == null || magnetometer == null) {
             // Device does not have required sensors
@@ -53,6 +76,14 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
                 this, magnetometer,
                 SensorManager.SENSOR_DELAY_NORMAL
         );
+
+        if (temperatureSensor != null) {
+            sensorManager.registerListener(this, temperatureSensor,SensorManager.SENSOR_DELAY_NORMAL );
+        }
+
+        if (humiditySensor != null) {
+            sensorManager.registerListener(this, humiditySensor, SensorManager.SENSOR_DELAY_NORMAL);
+        }
     }
 
     @Override
@@ -68,12 +99,19 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     @Override
     public void onSensorChanged(SensorEvent event) {
+
         if (event.sensor == accelerometer) {
             System.arraycopy(event.values, 0, accelerometerReading, 0, accelerometerReading.length);
         } else if (event.sensor == magnetometer) {
             System.arraycopy(event.values, 0, magnetometerReading, 0, magnetometerReading.length);
-        }
+        } else if (event.sensor == temperatureSensor) {
+            temperatureValue = event.values[0];
 
+            temperatureTextView.setText("Temperature: " + temperatureValue + "°C");
+        } else if (event.sensor == humiditySensor) {
+            humidityValue = event.values[0];
+            humidityTextView.setText("Humidity: " + humidityValue + "%");
+        }
         updateQiblaDirection();
     }
 

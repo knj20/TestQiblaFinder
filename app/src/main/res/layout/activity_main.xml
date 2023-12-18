@@ -29,4 +29,26 @@ tools:context=".MainActivity">
     android:gravity="center"
     android:layout_marginTop="16dp"/>
 
+    <TextView
+        android:id="@+id/temperatureTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Temperature: "
+        android:textSize="18sp"
+        android:layout_below="@id/qiblaDirectionTextView"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:layout_marginTop="16dp"/>
+
+    <TextView
+        android:id="@+id/humidityTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Humidity: "
+        android:textSize="18sp"
+        android:layout_below="@id/temperatureTextView"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:layout_marginTop="16dp"/>
+
 </RelativeLayout>

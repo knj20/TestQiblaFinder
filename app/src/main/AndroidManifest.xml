@@ -27,4 +27,12 @@
     <uses-feature android:name="android.hardware.sensor.compass" android:required="true" />
     <uses-feature android:name="android.hardware.sensor.accelerometer" android:required="true" />
 
+    <uses-feature
+        android:name="android.hardware.sensor.temperature"
+        android:required="false" />
+
+    <uses-feature
+        android:name="android.hardware.sensor.relative_humidity"
+        android:required="false" />
+
 </manifest>
